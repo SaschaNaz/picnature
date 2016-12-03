@@ -1,6 +1,7 @@
 namespace Picnature {
     export type Signature = Uint8Array | string;
     export const signatureMap = new Map<string, Signature[]>();
+    initialize();
 
     function initialize() {
         signatureMap.set("image/png", [Uint8Array.of(0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A)]);
@@ -26,7 +27,7 @@ namespace Picnature {
     function matchSignature(blob: Blob, signature: Uint8Array) {
         return new Promise<boolean>((resolve, reject) => {
             const reader = new FileReader();
-            reader.onload = () => resolve(matchArray(reader.result, signature));
+            reader.onload = () => resolve(matchArray(new Uint8Array(reader.result), signature));
             reader.onerror = err => reject(err);
             reader.readAsArrayBuffer(blob.slice(0, signature.length));
         });
